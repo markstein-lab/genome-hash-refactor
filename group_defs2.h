@@ -23,7 +23,7 @@ typedef struct {
 	int overflow;
 	char flags;
 	char palindrome;
-	char logical_name;
+	int logical_name;
 } hashEntry, *hashPtr;
 typedef struct ht hashTable, *htPtr;
 struct ht {

@@ -62,7 +62,7 @@ void printallsynonyms(char* resultstring, int syn_count);
 struct {
     char* pattern;
     int instances;
-    } patinfo[20];
+    } patinfo[500];
 
 
 int main (int argc, char *argv[])
@@ -619,7 +619,7 @@ start_clustering:
    if (strlen(boolean_expression)) {
       printf("Number of Clusters of your %d motifs with specified combination of\n", pattern_id);
       printf("%s\n", boolean_expression);
-      fprintf(save, "Number of Clusters of your %d motifs with specified combination of\n", pattern_id');
+      fprintf(save, "Number of Clusters of your %d motifs with specified combination of\n", pattern_id);
       fprintf(save, "%s\n", boolean_expression);
    } else {
       printf("Number of Clusters of your %d motifs in any combination\n", pattern_id);
