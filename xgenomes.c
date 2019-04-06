@@ -103,7 +103,7 @@ int main (int argc, char *argv[])
    char* remoteinput[14];
    int remotectr;
    int syn_count;
-   char allMotifs[1000];
+   char allMotifs[2000];
    char* ptr;
    int totalHits;
  
