@@ -10,7 +10,7 @@
 
 #define BORDERWIDTH 10
 void readgenome();
-void readinput(char line[]);
+void readinput(char line[], int n);
 int ncontigs;
 int extablesize;
 int exindex;
@@ -22,7 +22,7 @@ int flank[2 * BORDERWIDTH][4];
 char *DNAstring;
 void makerevcompl(char *from, char *to, int num);
 void recursiveRegister(char *line, char* target[], int *patnum); 
-void insertClusters(unsigned int **av, char ***pv, char line[]);
+void insertClusters(unsigned int **av, char ***pv, char line[], int n);
 void hsort2(unsigned int x[], unsigned int y[], int n);
 int do_the_search(int start, int stop, unsigned int *av, char **pv, int slide_size,
 				   unsigned int slide[], unsigned int patsize[]);
@@ -42,7 +42,7 @@ typedef   struct ann_index {
    } ann_index;
 ann_index *map;
 int annotation_search(int chr, int index);
-void getLine(char line[],FILE *f);
+void getLine(char line[], int n, FILE *f);
 void fullannot(int, int, int, char *, char *);
 int readContigs(FILE *qnames);
 char** annot_name;
@@ -126,8 +126,8 @@ int main (int argc, char *argv[])
       printf("Could not open output file %d\n", result);
       exit(99);
    }
-   getLine(speciesName, master);
-   getLine(speciesName, master);
+   getLine(speciesName, sizeof(speciesName), master);
+   getLine(speciesName, sizeof(speciesName), master);
    
    printf("Welcome to the %s Genome Hash\n", speciesName);
    fprintf(save, "Welcome to the %s Genome Hash\n", speciesName); 
@@ -135,7 +135,7 @@ int main (int argc, char *argv[])
    if (insource) {
 	   remote_input = 1;
 	   for (i = 0; i < 14; i++) {
-		   readinput(line);
+		   readinput(line, sizeof(line));
 		   remoteinput[i] = malloc(strlen(line) + 2);
 		   strcpy(remoteinput[i], line);
 	   }														  
@@ -193,7 +193,7 @@ int main (int argc, char *argv[])
    annot_name[k+1] = annot_name[k];
    qnames = fopen("exceptions.txt", "r");
    for (i = 0; i < extablesize; i++) {
-	   getLine(line, qnames);
+	   getLine(line, sizeof(line), qnames);
 	   sscanf(line, "%d %8.8ullx", &extable[2*i], &extable[2*i+1]);
 	   if (feof(qnames)) {
 		   printf("Exception table too short\n");
@@ -232,7 +232,7 @@ int main (int argc, char *argv[])
 			   exit (0);
 		   }
 		   for (j = 0; j < 10; j++) line[j] = 0;
-		   getLine(line, index_file);
+		   getLine(line, sizeof(line), index_file);
 		   j = sscanf(line, "%d%d%d %c %498[^\n\r]",&map[i].annot_number, &map[i].start,
 			   &map[i].stop, &map[i].direction, temp);
 		   map[i].gene_name = malloc(strlen(temp) + 1);
@@ -276,7 +276,7 @@ search_limiters:
    printf("Note: Use the IUPAC code to specify degenerate sequences|\n");
    printf("e.g. GGGWWWWCCM, GGGATACCC, GTGTCCG\n\n");
 read_pattern: 
-   readinput(allMotifs);  //reads line with all motifs
+   readinput(allMotifs, sizeof(allMotifs));  //reads line with all motifs
    printf("\n");
    ptr = allMotifs;
 
@@ -365,7 +365,7 @@ read_winLen:
    printf("e.g. to specify a 400 base pair window, enter 400: \n");
    comparestring[0]=0;
    margin = 0;
-   readinput(comparestring);
+   readinput(comparestring, sizeof(comparestring));
    varsfound = sscanf (comparestring, "%d %d %s", &winLen, &margin, line);
 //   printf("%s\n", comparestring);
    gene_names = 0;
@@ -383,7 +383,7 @@ read_winLen:
 read_boolean:
    printf("Must motifs occur in specific combinations to specify a cluster?\n");
    printf("Enter yes or no: ");
-   readinput(line);
+   readinput(line, sizeof(line));
    line[0] &= 0xDF;   //force upper case
    if (line[0] != 'Y') {
       boolean_expression[0] = 0;
@@ -399,7 +399,7 @@ read_boolean:
    printf("one occurrence of Motif B,\n");
    printf("Enter 2A and 1B.\n\n");
    printf("Enter the combination you require:\n");
-   readinput(boolean_expression);
+   readinput(boolean_expression, sizeof(boolean_expression));
    if (booleansyntax(boolean_expression) == 0) {
 	   printf("Ill formed boolean expression, re-enter \n");
 	   goto read_boolean;
@@ -633,7 +633,7 @@ start_clustering:
    fclose(archive);
    printf("Do you want to run the search again?\nEnter yes or no\n ");
    line[0] = 0;
-   readinput(line);
+   readinput(line, sizeof(line));
    line[0] &= 0xDF;
    if (strlen(line)) {
       if (line[0] == 'N') {
@@ -871,22 +871,22 @@ void recursiveRegister(char *line, char* target[], int *index) {
       return;
 }
 
-void readinput(char line[]) {
+void readinput(char line[], int n) {
 
    int i;
-   if (remote_input == 0) for (i=0; i<500; i++) {
+   if (remote_input == 0) for (i=0; i<n; i++) {
       line[i] = getchar();
       if (line[i] == '\n' || line[i] == EOF) break;
    }
-   else for (i = 0; i<500; i++) {
+   else for (i = 0; i<n; i++) {
 	   line[i] = getc(insource);
 	   if (line[i] == '\n' || line[i] == EOF) break;
    }
    line[i] = 0;
 }
-void getLine(char line[], FILE *f) {
+void getLine(char line[], int n, FILE *f) {
    int i;
-   for (i=0; i<500; i++) {
+   for (i=0; i<n; i++) {
       line[i] = getc(f);
       if (line[i] == '\n' || line[i] == EOF) break;
    }
@@ -924,7 +924,7 @@ void readgenome() {
 	fclose (qnames);
 }
 
-void insertClusters(unsigned int **av, char ***pv, char line[]) {
+void insertClusters(unsigned int **av, char ***pv, char line[], int n) {
 	int i;
 	unsigned int j, *k;
 	unsigned int start, stop;
@@ -942,7 +942,7 @@ void insertClusters(unsigned int **av, char ***pv, char line[]) {
 	   return ;
 	 }
 	while(feof(tempfile) == 0) {
-		getLine(line, tempfile);
+		getLine(line, n, tempfile);
 		if (line[0] == 0) break;
 		sscanf(line, "%x %x", &start, &stop);
 		tempstring = malloc(stop - start + 2);
@@ -983,7 +983,7 @@ int readContigs(FILE *qnames) {
 	int k = 0;
 	int i, isize;
 	while (!feof(qnames)) {
-	   getLine(line, qnames);   //read a line of contig info
+		getLine(line, sizeof(line), qnames);   //read a line of contig info
 	   //Format of a contig line is name of contig file, chr. no, contig no, start of contig,
 	   //size of contig.  We only use the start of contig for now.
 	   if (line[0] == 0) break;
@@ -1054,7 +1054,7 @@ void readgenenames(FILE *allnames, int syn_count){
 	char line[500], line2[1000];
 
 	for (i = 0; i < syn_count; i++) {
-		getLine(line2, allnames);
+		getLine(line2, sizeof(line2), allnames);
 		sscanf(line2, "%[^,],%d", line, &gene_number[i]);
 		n = strlen(line);
 		gene_name[i] = malloc(n+1);
