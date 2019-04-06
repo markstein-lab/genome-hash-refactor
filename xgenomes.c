@@ -32,7 +32,7 @@ FILE *index_file;
 FILE *archive;
 FILE *master;
 int map_size;
-char pattern_id;
+int pattern_id;
 typedef   struct ann_index {
 	int annot_number;
 	int start;
@@ -112,7 +112,7 @@ int main (int argc, char *argv[])
 
    count_only = ' ';
    result[0] = 0;
-   pattern_id = 'A';
+   pattern_id = 0;
    full_results = 0;
    remotectr = 0;
    master = fopen("master.txt", "r");
@@ -286,13 +286,13 @@ read_pattern:
       while(*ptr == ' ' || *ptr == ',') ptr++;
       if (line[strlen(line)-1] == ',') line[strlen(line)-1] = 0;
       linelength = strlen(line);
-      fprintf(save, "General pattern %c:= %s\n", pattern_id, line);
+      fprintf(save, "General pattern %d:= %s\n", pattern_id, line);
       if (linelength) {
         for (i = 0; i < linelength; i++) line[i] &= 0xDF; //force upper case
         recursiveRegister(line, target, &patnum);
-        patinfo[pattern_id-'A'].pattern = malloc(linelength+1);
-        strcpy(patinfo[pattern_id-'A'].pattern, line);
-        patinfo[pattern_id-'A'].instances = patnum - oldpatnum;
+        patinfo[pattern_id].pattern = malloc(linelength+1);
+        strcpy(patinfo[pattern_id].pattern, line);
+        patinfo[pattern_id].instances = patnum - oldpatnum;
 //        printf("Pattern generated %d sequences\n", patnum - oldpatnum);
 	    if (remote_input && patnum == oldpatnum) {
 		    fprintf(save, "ERROR - pattern %s contains inappropriate characters, no search patters generated\n", line);
@@ -312,8 +312,8 @@ endWhile:
   // patLen = strlen(target[0]);    //in this version, all patterns have same len.
    }
    printf("\nYou entered the following motifs:\n");
-   for (i = 0; i < pattern_id-'A'; i++) {
-      printf("Motif %c: %s \n", 'A'+i, patinfo[i].pattern);
+   for (i = 0; i < pattern_id; i++) {
+      printf("Motif %d: %s \n", i, patinfo[i].pattern);
    }
    printf("\nThis program scans the genome for clusters of your motifs by sliding\n");
    printf("a window of length L across the genome and asking in each instance\n");
@@ -392,8 +392,8 @@ read_boolean:
    }
    printf("\nEnter the combinations of your motifS required to specify a cluster \n");
    printf("Your Motifs are:\n");
-   for (i = 0; i < pattern_id-'A'; i++) {
-      printf("Motif %c: %s \n", 'A'+i, patinfo[i].pattern);
+   for (i = 0; i < pattern_id; i++) {
+      printf("Motif %s: %s \n", i, patinfo[i].pattern);
    }
    printf("\nExample: to require at least 2 occurrences of Motif A and ");
    printf("one occurrence of Motif B,\n");
@@ -599,31 +599,31 @@ start_clustering:
    fprintf(save, "\nGenome Hash scanned the %s genome for %d bp long windows that include\n", speciesName, winLen);
    fprintf(save, "%d or more occurrences of your motifs, with the following condition:\n", minGrpSize);
    fprintf(save, "%s\n\n", boolean_expression);
-   for (i = 0; i < pattern_id-'A'; i++) {
-      printf("Motif %c: %s \n", 'A'+i, patinfo[i].pattern);
-      fprintf(save, "Motif %c: %s \n", 'A'+i, patinfo[i].pattern);
+   for (i = 0; i < pattern_id; i++) {
+      printf("Motif %d: %s \n", i, patinfo[i].pattern);
+      fprintf(save, "Motif %d: %s \n", i, patinfo[i].pattern);
    }
    printf("\n");
    fprintf(save, "\n");
-   for (i = 0; i < pattern_id-'A'; i++) {
-      printf("Motif %c: %s \n represents %d sequence pattern(s)\n\n", 
-         'A'+i, patinfo[i].pattern, patinfo[i].instances);
-      fprintf(save, "Motif %c: %s \n represents %d sequence pattern(s)\n\n", 
-         'A'+i, patinfo[i].pattern, patinfo[i].instances);
+   for (i = 0; i < pattern_id; i++) {
+      printf("Motif %d: %s \n represents %d sequence pattern(s)\n\n",
+         i, patinfo[i].pattern, patinfo[i].instances);
+      fprintf(save, "Motif %d: %s \n represents %d sequence pattern(s)\n\n",
+         i, patinfo[i].pattern, patinfo[i].instances);
    }
 
    printf("These %d motifs occurred %d times in the genome\n\n", 
-      pattern_id-'A', totalHits);
+      pattern_id, totalHits);
    fprintf(save, "These %d motifs occurred %d times in the genome\n\n", 
-      pattern_id-'A', totalHits);
+      pattern_id, totalHits);
    if (strlen(boolean_expression)) {
-      printf("Number of Clusters of your %d motifs with specified combination of\n", pattern_id - 'A');
+      printf("Number of Clusters of your %d motifs with specified combination of\n", pattern_id);
       printf("%s\n", boolean_expression);
-      fprintf(save, "Number of Clusters of your %d motifs with specified combination of\n", pattern_id - 'A');
+      fprintf(save, "Number of Clusters of your %d motifs with specified combination of\n", pattern_id');
       fprintf(save, "%s\n", boolean_expression);
    } else {
-      printf("Number of Clusters of your %d motifs in any combination\n", pattern_id-'A');
-      fprintf(save, "Number of Clusters of your %d motifs in any combination\n", pattern_id-'A');
+      printf("Number of Clusters of your %d motifs in any combination\n", pattern_id);
+      fprintf(save, "Number of Clusters of your %d motifs in any combination\n", pattern_id);
    } 
    printf("%d\n", group_count);
    fprintf(save,"%d\n", group_count);
