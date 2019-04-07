@@ -1,8 +1,0 @@
-OBJ = makechrmutr.o searchstr2.o
-
-makechrmutr: $(OBJ)
-	cc $(OBJ) -o $@
-
-.c.o:
-	cc -O -c $<
-

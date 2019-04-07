@@ -1,8 +1,0 @@
-OBJ = random.o newbool.o searchstr2.o timer.o hsort2.o compressedHash.o fullannot2.o boolsyntax.o locategene.o
-
-random: $(OBJ)
-	cc $(OBJ) -o $@
-
-.c.o:
-	cc -O -c $<
-
