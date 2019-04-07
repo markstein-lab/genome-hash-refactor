@@ -123,7 +123,7 @@ int main (int argc, char *argv[])
    if (result[0] == 0) strcpy(result, "hashresults");
    save = fopen(result, "w");
    if (save == NULL) {
-      printf("Could not open output file %d\n", result);
+      printf("Could not open output file %s\n", result);
       exit(99);
    }
    getLine(speciesName, sizeof(speciesName), master);
@@ -155,8 +155,10 @@ int main (int argc, char *argv[])
 	   printf("No datasize.txt file in this directory -- quitting\n");
 	   exit(0);
    }
-   fscanf(qnames, "%d %d %d %d %d", &DNALen, &map_size, &ncontigs, &extablesize,
-	   &syn_count);
+   if (fscanf(qnames, "%d %d %d %d %d", &DNALen, &map_size, &ncontigs, &extablesize, &syn_count) <= 0) {
+	   printf("Could not read from datasize.txt -- quitting\n");
+	   exit(0);
+   }
 //  printf("genome size = %u; number of genes = %d, number of contigs = %d\n",
 //	   DNALen, map_size, ncontigs);
    fclose(qnames);
@@ -194,7 +196,7 @@ int main (int argc, char *argv[])
    qnames = fopen("exceptions.txt", "r");
    for (i = 0; i < extablesize; i++) {
 	   getLine(line, sizeof(line), qnames);
-	   sscanf(line, "%d %8.8ullx", &extable[2*i], &extable[2*i+1]);
+	   sscanf(line, "%d %8ullx", &extable[2*i], &extable[2*i+1]);
 	   if (feof(qnames)) {
 		   printf("Exception table too short\n");
 		   exit(0);
@@ -341,7 +343,7 @@ endWhile:
 
 //   printf("Instances found = %d\n", av-addrvec);
    totalHits = av - addrvec;
-   fprintf(save, "Instances found = %d\n", av-addrvec);
+   fprintf(save, "Instances found = %ld\n", av-addrvec);
 
    ref = 0;
    comparestring[0] = 0;    //not using a start pos input right now!
@@ -375,7 +377,10 @@ read_winLen:
    printf("\nHow many times must motifs (in any combination) occur to specify\n");
    printf("cluster? e.g. to specify that 4 or more occurences are required, enter 4:\n ");
 
-   scanf("%d", &minGrpSize);	
+   if (scanf("%d", &minGrpSize) <= 0) {
+	   printf("Could not read group size -- quitting.\n");
+	   exit(0);
+   }
    getchar();           //remove character that ended previous line
 //   printf("%d\n", minGrpSize);
    fprintf(save, "Minimum number of motifs in a cluster is %d\n", minGrpSize);
@@ -393,7 +398,7 @@ read_boolean:
    printf("\nEnter the combinations of your motifS required to specify a cluster \n");
    printf("Your Motifs are:\n");
    for (i = 0; i < pattern_id; i++) {
-      printf("Motif %s: %s \n", i, patinfo[i].pattern);
+      printf("Motif %d: %s \n", i, patinfo[i].pattern);
    }
    printf("\nExample: to require at least 2 occurrences of Motif A and ");
    printf("one occurrence of Motif B,\n");
@@ -506,7 +511,7 @@ start_clustering:
                               group_count,
                               (*ax) - arm[ichr],
                               chromo_name[ichr]);
-			   fprintf(archive, "%x %x %s\n", 
+			   fprintf(archive, "%x %lx %s\n", 
 				   *ax, *(ay-1) + strlen(*(py-1)) - 1, longsig);
 			   annotation_index = 
 				   annotation_search(ichr, 
@@ -637,7 +642,7 @@ start_clustering:
    line[0] &= 0xDF;
    if (strlen(line)) {
       if (line[0] == 'N') {
-         close(save);
+         fclose(save);
          exit(0);
       }
    }
@@ -975,7 +980,7 @@ void insertClusters(unsigned int **av, char ***pv, char line[], int n) {
 		(*av)++;
 		(*pv)++;
 	}
-	printf("File contained %d items\n", *av - k);
+	printf("File contained %ld items\n", *av - k);
 	fclose(tempfile);
 }
 int readContigs(FILE *qnames) {

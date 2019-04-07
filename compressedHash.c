@@ -8,8 +8,8 @@ char *DNAstring;
 
 
 #define FOLD   hash += ((hash>>11) + (hash>>20));
-extern char lookup[4] = {'A', 'C', 'G', 'T'};
-extern char lookrev[4] = {'T', 'G', 'C', 'A'};
+char lookup[4] = {'A', 'C', 'G', 'T'};
+char lookrev[4] = {'T', 'G', 'C', 'A'};
 
 
 
