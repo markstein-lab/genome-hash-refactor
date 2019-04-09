@@ -4,8 +4,8 @@
 #ifdef WIN32
 #include <time.h>
 typedef struct timeval {
-    unsigned long tv_sec;
-    long tv_usec;
+		unsigned long tv_sec;
+		long tv_usec;
 } TIMEVAL;
 #else
 #include <sys/time.h>
@@ -17,11 +17,11 @@ extern "C"
 {
 #endif
 
-void getTime(TIMEVAL *t); 
+void getTime(TIMEVAL *t);
 int getDiffMillisecs(TIMEVAL *t1, TIMEVAL *t2);
 
 #if defined(__cplusplus)
 }
-#endif 
+#endif
 
 #endif

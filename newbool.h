@@ -8,10 +8,10 @@ extern "C"
 {
 #endif
 
-int newbool(int [][3], int,  char *boolstr);
+int newbool(int [][3], int, char *boolstr);
 
 #if defined(__cplusplus)
 }
-#endif 
+#endif
 
 #endif

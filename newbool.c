@@ -1,20 +1,19 @@
 //Copyright (c) in silico Labs, LLC 2004
 
-//Reads input from files named in filelist.txt. Each file listed in filelist
-//contains a sequence of nucleotides.
+// Reads input from files named in filelist.txt. Each file listed in filelist
+// contains a sequence of nucleotides.
 
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-//#include "group_defs.h"
 
 #define NUMBER 1
-#define NOT    2
+#define NOT	   2
 #define HITS   3
 #define BOOL   4
-#define AND    5
-#define OR     6
+#define AND	   5
+#define OR	   6
 #define STOP   7
 #define START  8
 #define COLUMNS 9
@@ -23,11 +22,8 @@
 #define TRUE   1
 #define FALSE  0
 
-
-//int nfields;
-
-
-int newbool(int counts[][3], int arraysize, char boolexp[]){
+int newbool(int counts[][3], int arraysize, char boolexp[])
+{
 	int sum, i, cols, pos;
 	int stack[20], oper[20], stkndx, operndx, number;
 	unsigned int mask;
@@ -35,7 +31,7 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 	char c;
 	int quantum;
 	int oneDirection, psum, msum, pcols, mcols;
-	
+
 	i = pos = 0;
 	stkndx = 0;
 	operndx = 0;
@@ -43,20 +39,20 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 	skip = 0;
 	quantum = 1;
 	while(1) {
-		if (operndx > 0 && !skip) {	   //try to collapse stack
-			if (operndx > 1 && oper[operndx-1] == STOP) {	 //START-STOP -- remove parens
+		if (operndx > 0 && !skip) { // try to collapse stack
+			if (operndx > 1 && oper[operndx-1] == STOP) { // START-STOP -- remove parens
 				if (oper[operndx-2] == START) {
- 					operndx = operndx - 2;
+					operndx = operndx - 2;
 					continue;
 				}
 
-				if (oper[operndx-2] == NOT) {  //complement top of stack
+				if (oper[operndx-2] == NOT) { // complement top of stack
 					stack[stkndx-1] = stack[stkndx-1]? 0 : 1;
 					oper[operndx-2] = STOP;
 					operndx = operndx -1;
 					continue;
 				}
-				if (oper[operndx-2] == AND) { //AND top of stack items
+				if (oper[operndx-2] == AND) { // AND top of stack items
 					stack[stkndx-2] &= stack[stkndx-1];
 					oper[operndx-2] = STOP;
 					stkndx -= 1;
@@ -73,8 +69,8 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 				}
 
 			}
-			if (oper[operndx-1] == NOT) {// NOT - complement top of stack
-			    stack[stkndx-1] = stack[stkndx-1]? 0 : 1;
+			if (oper[operndx-1] == NOT) { // NOT - complement top of stack
+				stack[stkndx-1] = stack[stkndx-1]? 0 : 1;
 				operndx -= 1;
 				continue;
 			}
@@ -86,9 +82,8 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 				continue;
 			}
 
-			if (oper[operndx-1] == OR) { 
-				//if (operndx == 1 || oper[operndx-2] == START || oper[operndx-2] == OR) 
-				if (boolexp[pos] == 0) {	
+			if (oper[operndx-1] == OR) {
+				if (boolexp[pos] == 0) {
 					stack[stkndx-2] |= stack[stkndx-1];
 					stkndx--;
 					operndx--;
@@ -112,7 +107,7 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 		}
 		if (c == ' ') continue;
 		skip = 0;
-		if (isdigit(c)) { //interpret integer
+		if (isdigit(c)) { // interpret integer
 			number = c - '0';
 			while (isdigit(boolexp[pos])) {
 				number = 10*number + boolexp[pos++] - '0';
@@ -121,7 +116,7 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 			oper[operndx++] = NUMBER;
 			continue;
 		}
-		if (isupper(c)) {//interpret class letter
+		if (isupper(c)) { // interpret class letter
 			mask = 1<<(c-'A');
 			oneDirection = FALSE;
 			while (isupper(boolexp[pos])) {
@@ -134,8 +129,8 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 			while (boolexp[pos] == ' ') pos++;
 			if (operndx > 0 && oper[operndx-1] == START &&
 				boolexp[pos] == ')' ) {
-				//parens surround a string of letters -- drop them
-				pos++; //drop the input right paren
+				// parens surround a string of letters -- drop them
+				pos++; // drop the input right paren
 				operndx--;
 			}
 			sum = 0; cols = 0; maxlimit = 0;
@@ -181,10 +176,10 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 			}
 			oper[operndx++] = HITS;
 			if (operndx > 1 && oper[operndx-2] == NUMBER) {
-				//specific number of hits wanted.
+				// specific number of hits wanted.
 				if (stack[stkndx-1] >= stack[stkndx-2]) stack[stkndx-2] = 1;
 				else stack[stkndx-2] = 0;
-				stkndx--; 
+				stkndx--;
 				operndx-=2;
 			}
 			else {
@@ -199,9 +194,9 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 			oper[operndx++] = STOP;
 			continue;
 		}
-			
 
-		if (c == '(') {  //parenthesized expression
+
+		if (c == '(') { // parenthesized expression
 			oper[operndx++] = START;
 			skip = 1;
 			continue;
@@ -224,50 +219,45 @@ int newbool(int counts[][3], int arraysize, char boolexp[]){
 			skip = 1;
 			continue;
 		}
-		
+
 		if (c == '#') {
-			if (oper[operndx] == START) return 0;  //error condition -return false
+			if (oper[operndx] == START) return 0; // error condition -return false
 			oper[operndx++] = COLUMNS;
 			continue;
 		}
-		
-		if (c == 'n' && boolexp[pos] == 'o' && boolexp[pos+1] == 't') {	
+
+		if (c == 'n' && boolexp[pos] == 'o' && boolexp[pos+1] == 't') {
 			pos +=2;
 			oper[operndx++] = NOT;
 			skip = 1;
-			continue;		
+			continue;
 		}
 
-		if (c == 'a' && boolexp[pos] == 'n' && boolexp[pos+1] == 'd') {	
+		if (c == 'a' && boolexp[pos] == 'n' && boolexp[pos+1] == 'd') {
 			pos +=2;
 			oper[operndx++] = AND;
 			skip = 1;
-			continue;		
+			continue;
 		}
 
-		if (c == 'o' && boolexp[pos] == 'r') {	
+		if (c == 'o' && boolexp[pos] == 'r') {
 			pos +=1;
 			oper[operndx++] = OR;
 			skip = 1;
-			continue;		
+			continue;
 		}
-		
+
 		if (c == '$') {
-			if (oper[operndx] == START) return 0;  //error condition -return false
+			if (oper[operndx] == START) return 0; // error condition -return false
 			oper[operndx++] = LIMIT;
 			continue;
 		}
 
 		if (c == '*') {
-			if (oper[operndx] == START) return 0;  //error condition -return false
+			if (oper[operndx] == START) return 0; // error condition -return false
 			quantum = stack[--stkndx];
 			operndx--;
 			continue;
 		}
-
-
 	}
-
-}											
-
-
+}
