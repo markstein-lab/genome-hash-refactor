@@ -72,7 +72,8 @@ int main (int argc, char *argv[])
 		FILE *qnames;
 		FILE *allnames;
 		char line[500], comparestring[200], hitlist[500], decnumber[20];
-		char resultstring[100000], signature[250];
+		char resultstring[100000];
+		int signature[250];
 		int i, j, k, ix, ichr;
 		int winLen, linelength;
 		int slide_size, group_count, maxpatsize;
@@ -445,19 +446,19 @@ start_clustering:
 												signature[i] = hpt->logical_name;
 												longsig[2*i] = signature[i];
 												i++;
-												counts[signature[i-1] - 'A'][0]++;
+												counts[signature[i-1]][0]++;
 												if (hpt->palindrome) {
 														longsig[2*i-1] = '*';
-														counts[signature[i-1] - 'A'][1]++;
-														counts[signature[i-1] - 'A'][2]++;
+														counts[signature[i-1]][1]++;
+														counts[signature[i-1]][2]++;
 												}
 												else if (hpt->flags) {
 														longsig[2*i - 1] = '+';
-														counts[signature[i-1] - 'A'][1]++;
+														counts[signature[i-1]][1]++;
 												}
 												else {
 														longsig[2*i - 1] = '-';
-														counts[signature[i-1] - 'A'][2]++;
+														counts[signature[i-1]][2]++;
 												}
 												sprintf(decnumber, "%c%d,", longsig[2*i - 1], *az - *ax);
 												strcat(hitlist, decnumber);
