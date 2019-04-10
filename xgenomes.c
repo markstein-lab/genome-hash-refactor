@@ -532,7 +532,7 @@ start_clustering:
 												}
 										}
 										if (gene_names == 0) fprintf(save, "\n");
-										free(clusterDNA);
+										// free(clusterDNA);
 								}
 
 								fprintf(save, "-------------------------\n");
