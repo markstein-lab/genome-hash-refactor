@@ -310,6 +310,7 @@ read_pattern:
 
 		// Construct the hash table
 
+		getTime(&time2);
 		maxpatsize = 0;
 		rawhash = 0;
 		for (i = 0; i < slide_size; i++) {
@@ -320,10 +321,10 @@ read_pattern:
 		ix = do_the_search(search_start, search_stop, av, pv, slide_size, slide, patsize);
 		av += ix;
 		pv += ix;
-
-		getTime(&time2);
-		hsort2(addrvec, (unsigned int *)patvec, av-addrvec);
 		getTime(&time1);
+		printf("Search finished in %d ns\n", getDiffNanosecs(&time2, &time1));
+
+		hsort2(addrvec, (unsigned int *)patvec, av-addrvec);
 
 		totalHits = av - addrvec;
 		fprintf(save, "Instances found = %ld\n", av-addrvec);

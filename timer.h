@@ -8,8 +8,10 @@ typedef struct timeval {
 		long tv_usec;
 } TIMEVAL;
 #else
-#include <sys/time.h>
-typedef struct timeval TIMEVAL;
+/* #include <sys/time.h> */
+/* typedef struct timeval TIMEVAL; */
+#include <time.h>
+typedef struct timespec TIMEVAL;
 #endif
 
 #if defined(__cplusplus)
@@ -19,6 +21,7 @@ extern "C"
 
 void getTime(TIMEVAL *t);
 int getDiffMillisecs(TIMEVAL *t1, TIMEVAL *t2);
+int getDiffNanosecs(TIMEVAL *t1, TIMEVAL *t2);
 
 #if defined(__cplusplus)
 }
