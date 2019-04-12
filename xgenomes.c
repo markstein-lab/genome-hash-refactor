@@ -322,7 +322,7 @@ read_pattern:
 		av += ix;
 		pv += ix;
 		getTime(&time1);
-		printf("Search finished in %d ns\n", getDiffNanosecs(&time2, &time1));
+		printf("Search finished in %ld ns\n", getDiffNanosecs(&time2, &time1));
 
 		hsort2(addrvec, (unsigned int *)patvec, av-addrvec);
 

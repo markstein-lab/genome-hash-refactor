@@ -42,7 +42,7 @@ int getDiffMillisecs(TIMEVAL *first, TIMEVAL *second)
 #endif
 }
 
-int getDiffNanosecs(TIMEVAL *first, TIMEVAL *second)
+long getDiffNanosecs(TIMEVAL *first, TIMEVAL *second)
 {
 #ifndef WIN32
 		return (second->tv_sec - first->tv_sec) * 1000000000 +
