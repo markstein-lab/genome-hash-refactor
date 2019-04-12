@@ -1,6 +1,7 @@
 //Copyright (c) World Internet Productions, LLC, 1999, 2000, 2001
 //Copyright (c) in silico Labs, LLC. 2004, 2005, 2006
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -71,6 +72,7 @@ int main (int argc, char *argv[])
 		FILE *stream;
 		FILE *qnames;
 		FILE *allnames;
+		char *cur;
 		char line[500], comparestring[200], hitlist[500], decnumber[20];
 		char resultstring[100000];
 		int signature[250];
@@ -269,10 +271,13 @@ read_pattern:
 		ptr = allMotifs;
 
 		while (strlen(ptr)) {
-				sscanf(ptr, "%s", line);
-				ptr += strlen(line);
+				cur = line;
+				while (isalpha(*ptr)) {
+						*cur++ = *ptr++;
+				}
 				while(*ptr == ' ' || *ptr == ',') ptr++;
-				if (line[strlen(line)-1] == ',') line[strlen(line)-1] = 0;
+				*cur = '\0';
+
 				linelength = strlen(line);
 				fprintf(save, "General pattern %d:= %s\n", pattern_id, line);
 				if (linelength) {
