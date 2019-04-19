@@ -161,6 +161,7 @@ int main (int argc, char *argv[])
 				printf("Could not read from datasize.txt -- quitting\n");
 				exit(0);
 		}
+		printf("Your genome has %u nucleotides\n", DNALen);
 		fclose(qnames);
 		DNAstring = malloc(DNALen/4 + 8);
 		if (DNAstring == 0) {
