@@ -206,6 +206,10 @@ int main (int argc, char *argv[])
 		getTime(&time1);
 		readgenome(); // read in the genome itself
 		getTime(&time2);
+
+		printf("Time to read genome was %ld nanoseconds\n",
+			   getDiffNanosecs(&time1, &time2));
+
 		printf("\nThis program searches the entire %s genome\n", speciesName);
 		fprintf(save, "\nThis program searches the entire %s genome\n", speciesName);
 		printf("for clusters of DNA sequence motifs.\n\n");
